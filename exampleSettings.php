@@ -23,40 +23,45 @@
 class exampleSettings extends PluginBase {
 
     protected $storage = 'DbStorage';
-        static protected $name = 'Example of settings';
+    static protected $name = 'Example of settings';
     static protected $description = 'Example plugin showing all settings';
     
     protected $settings = array(
         'boolean'=>array(
             'type'=>'boolean',
             'label'=>'A boolean setting',
-            'help'=>'An help text',
+            'help'=>'An help text, default is 0',
+            'default'=>0,
         ),
         'checkbox'=>array(
             'type'=>'checkbox',
             'label'=>'A checkbox setting',
-            'help'=>'An help text',
+            'help'=>'An help text, if not checkd set to NULL, NULL is the default',
         ),
         'float'=>array(
             'type'=>'float',
             'label'=>'A float setting',
-            'help'=>'The pattern is set to  "\d+(\.\d+)?"',
+            'help'=>'The pattern is set to  "\d+(\.\d+)?". Default set to 42.42.',
+            'default'=>42.42,
         ),
         'html'=>array(
             'type'=>'html',
             'label'=>'A html setting',
-            'help'=>'Some help for HTML5 editor"',
+            'help'=>'Some help for HTML5 editor, accept &lt;b&gt; &lt;i&gt; but not &lt;strong&gt; or &lt;em&gt;',
+            'default'=>'Some html with <b>bold</b> or <i>italic</i> text.',
         ),
         'int'=>array(
             'type'=>'int',
             'label'=>'A int setting',
             'help'=>'For integer value, pattern is "\d+"',
+            'default'=>'42',
         ),
         'json'=>array(
             'type'=>'json',
             'label'=>'A json setting',
             'editorOptions'=>array('mode'=>'tree'),
             'help'=>'For json settings, here with \'editorOptions\'=>array(\'mode\'=>\'tree\'), . See jsoneditoronline.org',
+            'default'=>'{"array":[1,2,3],"boolean":true,"null":null,"number":123,"object":{"a":"b","c":"d","e":"f"},"string":"Hello World"}',
         ),
         'logo'=>array(
             'type'=>'logo',
@@ -75,23 +80,28 @@ class exampleSettings extends PluginBase {
             'options'=>array(
                 'opt1'=>'Option 1',
                 'opt2'=>'Option 2',
+                'opt3'=>'Option 3 (default)',
             ),
             'help'=>'A select setting, need an array of option.',
+            'default'=>'opt3',
         ),
         'string'=>array(
             'type'=>'string',
             'label'=>'A string setting',
             'help'=>'Some help.',
+            'default'=>'Default string',
         ),
         'text'=>array(
             'type'=>'text',
             'label'=>'A text setting',
             'help'=>'Some help.',
+            'default'=>"Some default text\n use \\n for multiline",
         ),
         'password'=>array(
             'type'=>'password',
             'label'=>'A password setting',
             'help'=>'Some help.',
+            'default'=>'default password',
         ),
         /* functionnality list not ready */
         'settingslist'=>array(
@@ -113,8 +123,8 @@ class exampleSettings extends PluginBase {
     
     public function __construct(PluginManager $manager, $id) {
         parent::__construct($manager, $id);
-        //$this->subscribe('beforeSurveySettings');
-        //$this->subscribe('newSurveySettings');
+        $this->subscribe('beforeSurveySettings');
+        $this->subscribe('newSurveySettings');
     }
 
     /**
@@ -133,8 +143,97 @@ class exampleSettings extends PluginBase {
                     'type'=>'boolean',
                     'label'=>'A boolean setting',
                     'help'=>'An help text',
-                    'current' => $this->get('boolean', 'Survey', $event->get('survey'))
+                    'current' => $this->get('boolean', 'Survey', $event->get('survey'),$this->get('boolean',null,null,$this->settings['boolean']['default'])),
                 ),
+                'checkbox'=>array(
+                    'type'=>'checkbox',
+                    'label'=>'A checkbox setting',
+                    'help'=>'An help text',
+                    'current' => $this->get('checkbox', 'Survey', $event->get('survey'),$this->get('checkbox'))
+                ),
+                'float'=>array(
+                    'type'=>'float',
+                    'label'=>'A float setting',
+                    'help'=>'The pattern is set to  "\d+(\.\d+)?"',
+                    'current' => $this->get('float', 'Survey', $event->get('survey'),$this->get('float',null,null,$this->settings['float']['default'])),
+                ),
+                'html'=>array(
+                    'type'=>'html',
+                    'label'=>'A html setting',
+                    'help'=>'Some help for HTML5 editor"',
+                    'current' => $this->get('html', 'Survey', $event->get('survey'),$this->get('html',null,null,$this->settings['html']['default'])),
+                ),
+                'int'=>array(
+                    'type'=>'int',
+                    'label'=>'A int setting',
+                    'help'=>'For integer value, pattern is "\d+"',
+                    'current' => $this->get('int', 'Survey', $event->get('survey'),$this->get('int',null,null,$this->settings['int']['default'])),
+                ),
+                'json'=>array(
+                    'type'=>'json',
+                    'label'=>'A json setting',
+                    'editorOptions'=>array('mode'=>'tree'),
+                    'help'=>'For json settings, here with \'editorOptions\'=>array(\'mode\'=>\'tree\'), . See jsoneditoronline.org',
+                    'current' => $this->get('json', 'Survey', $event->get('survey'),$this->get('json',null,null,$this->settings['json']['default'])),
+                ),
+                'logo'=>array(
+                    'type'=>'logo',
+                    'label'=>'The logo',
+                    'path'=>Yii::app()->baseUrl."/plugins/exampleSettings/assets/logo.png",
+                    'help'=>'Just use type and path'
+                ),
+                'relevance'=>array(
+                    'type'=>'relevance',
+                    'label'=>'A relevance setting',
+                    'help'=>'A relevance setting',
+                    'current' => $this->get('relevance', 'Survey', $event->get('survey'),$this->get('relevance')),
+                ),
+                'select'=>array(
+                    'type'=>'select',
+                    'label'=>'A select setting',
+                    'options'=>array(
+                        'opt1'=>'Option 1',
+                        'opt2'=>'Option 2',
+                        'opt3'=>'Option 3 (default)',
+                    ),
+                    'help'=>'A select setting, need an array of option.',
+                    'current' => $this->get('select', 'Survey', $event->get('survey'),$this->get('select',null,null,$this->settings['select']['default'])),
+                ),
+                'string'=>array(
+                    'type'=>'string',
+                    'label'=>'A string setting',
+                    'help'=>'Some help.',
+                    'current' => $this->get('string', 'Survey', $event->get('survey'),$this->get('string',null,null,$this->settings['string']['default'])),
+                ),
+                'text'=>array(
+                    'type'=>'text',
+                    'label'=>'A text setting',
+                    'help'=>'Some help.',
+                    'default'=>'Some default text',
+                    'current' => $this->get('text', 'Survey', $event->get('survey'),$this->get('text',null,null,$this->settings['text']['default'])),
+                ),
+                'password'=>array(
+                    'type'=>'password',
+                    'label'=>'A password setting',
+                    'help'=>'Some help.',
+                    'current' => $this->get('password', 'Survey', $event->get('survey'),$this->get('password',null,null,$this->settings['password']['default'])),
+                ),
+                /* functionnality list not ready */
+#                'settingslist'=>array(
+#                    'type'=>'list',
+#                    'label'=>'A list setting: need a list of settings',
+#                    'help'=>'Some help for the list, each items can have an help, but shown inside the table.',
+#                    'items'=>array(
+#                        'string-lst'=>array(
+#                            'type'=>'string',
+#                            'label'=>'A string setting in list',
+#                        ),
+#                        'checkbox-lst'=>array(
+#                            'type'=>'checkbox',
+#                            'label'=>'A checkbox setting in list',
+#                        ),
+#                    ),
+#                ),
             )
          ));
     }
@@ -144,7 +243,10 @@ class exampleSettings extends PluginBase {
         $event = $this->event;
         foreach ($event->get('settings') as $name => $value)
         {
-            $this->set($name, $value, 'Survey', $event->get('survey'));
+            if(isset($this->settings[$name]['default']))
+                $this->set($name, $value, 'Survey', $event->get('survey'),$event->get($name,null,null,$this->settings[$name]['default']));
+            else
+                $this->set($name, $value, 'Survey', $event->get('survey'),$event->get($name));
         }
     }
 
