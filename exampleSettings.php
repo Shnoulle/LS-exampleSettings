@@ -30,7 +30,7 @@ class exampleSettings extends PluginBase {
         'boolean'=>array(
             'type'=>'boolean',
             'label'=>'A boolean setting',
-            'help'=>'An help text, default is 0',
+            'help'=>'An help text, default is null, here set to 0.',
             'default'=>0,
         ),
         'checkbox'=>array(
@@ -67,7 +67,12 @@ class exampleSettings extends PluginBase {
             'type'=>'logo',
             'label'=>'The logo',
             'path'=>'assets/logo.png',
-            'help'=>'Just use type and path'
+            'help'=>'Just use type and path : after another logo without label and help.'
+        ),
+        'logo2'=>array(
+            'type'=>'logo',
+            'path'=>'assets/logo.png',
+
         ),
         'relevance'=>array(
             'type'=>'relevance',
@@ -103,7 +108,8 @@ class exampleSettings extends PluginBase {
             'help'=>'Some help.',
             'default'=>'default password',
         ),
-        /* functionnality list not ready */
+        /* functionnality list not ready (or don't understand)*/
+        /*
         'settingslist'=>array(
             'type'=>'list',
             'label'=>'A list setting: need a list of settings',
@@ -119,6 +125,7 @@ class exampleSettings extends PluginBase {
                 ),
             ),
         ),
+        */
     );
     
     public function __construct(PluginManager $manager, $id) {
@@ -178,9 +185,8 @@ class exampleSettings extends PluginBase {
                 ),
                 'logo'=>array(
                     'type'=>'logo',
-                    'label'=>'The logo',
+                    'label'=> 'A logo with a label',
                     'path'=>Yii::app()->baseUrl."/plugins/exampleSettings/assets/logo.png",
-                    'help'=>'Just use type and path'
                 ),
                 'relevance'=>array(
                     'type'=>'relevance',
@@ -209,7 +215,6 @@ class exampleSettings extends PluginBase {
                     'type'=>'text',
                     'label'=>'A text setting',
                     'help'=>'Some help.',
-                    'default'=>'Some default text',
                     'current' => $this->get('text', 'Survey', $event->get('survey'),$this->get('text',null,null,$this->settings['text']['default'])),
                 ),
                 'password'=>array(
@@ -218,22 +223,6 @@ class exampleSettings extends PluginBase {
                     'help'=>'Some help.',
                     'current' => $this->get('password', 'Survey', $event->get('survey'),$this->get('password',null,null,$this->settings['password']['default'])),
                 ),
-                /* functionnality list not ready */
-#                'settingslist'=>array(
-#                    'type'=>'list',
-#                    'label'=>'A list setting: need a list of settings',
-#                    'help'=>'Some help for the list, each items can have an help, but shown inside the table.',
-#                    'items'=>array(
-#                        'string-lst'=>array(
-#                            'type'=>'string',
-#                            'label'=>'A string setting in list',
-#                        ),
-#                        'checkbox-lst'=>array(
-#                            'type'=>'checkbox',
-#                            'label'=>'A checkbox setting in list',
-#                        ),
-#                    ),
-#                ),
             )
          ));
     }
@@ -243,10 +232,9 @@ class exampleSettings extends PluginBase {
         $event = $this->event;
         foreach ($event->get('settings') as $name => $value)
         {
-            if(isset($this->settings[$name]['default']))
-                $this->set($name, $value, 'Survey', $event->get('survey'),$event->get($name,null,null,$this->settings[$name]['default']));
-            else
-                $this->set($name, $value, 'Survey', $event->get('survey'),$event->get($name));
+            /* In order use survey setting, if not set, use global, if not set use default */
+            $default=$event->get($name,null,null,isset($this->settings[$name]['default'])?$this->settings[$name]['default']:NULL)
+            $this->set($name, $value, 'Survey', $event->get('survey'),$default);
         }
     }
 
