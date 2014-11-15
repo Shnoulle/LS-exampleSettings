@@ -72,7 +72,10 @@ class exampleSettings extends PluginBase {
         'logo2'=>array(
             'type'=>'logo',
             'path'=>'assets/logo.png',
-
+        ),
+        'info' => array(
+            'type' => 'info',
+            'content' => 'Some information to show to admin. You can use html code like <strong>strong</strong> or more with bootstrap for example.<p class="alert">For your information : you see 2 logo before this setting, but the 2 logo are different in version 2.06 of LimeSurvey.</p>',
         ),
         'relevance'=>array(
             'type'=>'relevance',
@@ -187,6 +190,10 @@ class exampleSettings extends PluginBase {
                     'type'=>'logo',
                     'label'=> 'A logo with a label',
                     'path'=>Yii::app()->baseUrl."/plugins/exampleSettings/assets/logo.png",
+                ),
+                'info' => array(
+                    'type' => 'info',
+                    'content' => 'Some information to show to admin. You can use html code like <strong>strong</strong> or more with bootstrap for example',
                 ),
                 'relevance'=>array(
                     'type'=>'relevance',
